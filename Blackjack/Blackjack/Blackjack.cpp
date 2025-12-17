@@ -6,48 +6,49 @@
 
 using namespace std;
 
-struct Cards {
+struct Card {
     string rank;
     string suit;
     int value;
 };
-class Card {
+class Deck {
 private:
     vector<string> suits = { "Черви", "Бубны", "Пики", "Крести" };
     vector<string> ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Валет", "Дама", "Король", "Туз" };
 	int values[13] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 1 };
     
 public:
-    vector<Cards> createDeck() {
-        vector<Cards> deck;
-        for (const auto& suit : suits) {
-            int i = 0;
-            for (const auto& rank : ranks) {
-                deck.push_back({ rank,suit,values[i] });
-                i++;
+    vector<Card> createDeck() {
+        vector<Card> deck;
+        for (int s = 0; s < 4; s++) {
+            for (const auto& suit : suits) {
+                int i = 0;
+                for (const auto& rank : ranks) {
+                    deck.push_back({ rank,suit,values[i] });
+                    i++;
+                }
             }
         }
         return deck;
     }
 };
 
-class Game {
+class BlackJackGame {
 private:
-    vector<Cards> deck,player,dealer;
+    vector<Card> deck,player,dealer;
     int indexCard = 0; //Индекс следующей карты
 public:
     void mixDeck() {
         shuffle(deck.begin(), deck.end(), default_random_engine(time(0)));
-        return;
     }
-    Cards takeCard() {
+    Card takeCard() {
         if (indexCard >= deck.size()) {
             mixDeck();
             indexCard = 0;
         }
         return deck[indexCard++];
     }
-    int checkHand(vector<Cards>& hand) {
+    int checkHand(const vector<Card>& hand) {
         int countAce = 0;
         int sum = 0;
         for (const auto& card : hand) {
@@ -96,7 +97,7 @@ public:
                 }
             }
             if (!over) {
-                while (checkHand(player)>checkHand(dealer)) {
+                while (17>checkHand(dealer)) {
                     dealer.push_back(takeCard());
                 }
             }
@@ -134,7 +135,7 @@ public:
             
         }
     }
-    Game(vector<Cards> _deck) : deck(_deck) {
+    BlackJackGame(vector<Card> _deck) : deck(_deck) {
         mixDeck();
     }
 
@@ -148,11 +149,8 @@ int main()
     cout << endl;
     cout << "Добро пожаловать в игру Блэкджек!" << endl;
     cout << endl;
-	int meCounter, dealerCounter = 0;
-    Card card;
-    Game game(card.createDeck());
+    Deck deck;
+    BlackJackGame game(deck.createDeck());
     game.startGame();
-
-    //cout << "Ваш баланс = " << endl;
 
 }

@@ -1,4 +1,3 @@
 ﻿  Blackjack.cpp
-D:\WORKING_FOLDER\C++\2nd_year\Blackjack\Blackjack\Blackjack\Blackjack\Blackjack.cpp(40,69): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
-D:\WORKING_FOLDER\C++\2nd_year\Blackjack\Blackjack\Blackjack\Blackjack\Blackjack.cpp(151,6): warning C4101: meCounter: неиспользованная локальная переменная
+D:\WORKING_FOLDER\C++\2nd_year\Blackjack\Blackjack\Blackjack\Blackjack\Blackjack.cpp(42,69): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
   Blackjack.vcxproj -> D:\WORKING_FOLDER\C++\2nd_year\Blackjack\Blackjack\Blackjack\x64\Debug\Blackjack.exe
