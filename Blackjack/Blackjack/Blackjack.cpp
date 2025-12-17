@@ -64,6 +64,9 @@ public:
         return sum;
     }
     void startGame() {
+        system("cls");
+        cout << "Добро пожаловать в игру Блэкджек!" << endl;
+        cout << endl;
         while (true) {
             player.clear();
             dealer.clear();
@@ -146,9 +149,6 @@ public:
 int main()
 {
     system("chcp 1251");
-    cout << endl;
-    cout << "Добро пожаловать в игру Блэкджек!" << endl;
-    cout << endl;
     Deck deck;
     BlackJackGame game(deck.createDeck());
     game.startGame();
