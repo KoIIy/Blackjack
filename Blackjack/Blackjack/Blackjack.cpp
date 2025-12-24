@@ -6,6 +6,9 @@
 
 using namespace std;
 
+int indexCard = 0;
+default_random_engine gen(random_device{}());
+
 struct Card {
     string rank;
     string suit;
@@ -16,30 +19,11 @@ private:
     vector<string> suits = { "Черви", "Бубны", "Пики", "Крести" };
     vector<string> ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "Валет", "Дама", "Король", "Туз" };
 	int values[13] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 1 };
-    
+    int count;
 public:
-    vector<Card> createDeck() {
-        vector<Card> deck;
-        for (int s = 0; s < 4; s++) {
-            for (const auto& suit : suits) {
-                int i = 0;
-                for (const auto& rank : ranks) {
-                    deck.push_back({ rank,suit,values[i] });
-                    i++;
-                }
-            }
-        }
-        return deck;
-    }
-};
-
-class BlackJackGame {
-private:
-    vector<Card> deck,player,dealer;
-    int indexCard = 0; //Индекс следующей карты
-public:
+    vector<Card> deck;
     void mixDeck() {
-        shuffle(deck.begin(), deck.end(), default_random_engine(time(0)));
+        shuffle(deck.begin(), deck.end(), gen);  //Исправил постоянное пересоздание переменной при перемешивании карт
     }
     Card takeCard() {
         if (indexCard >= deck.size()) {
@@ -48,6 +32,28 @@ public:
         }
         return deck[indexCard++];
     }
+    Deck(int _count = 1) :count(_count) {
+        int s = 0;
+        do {
+            for (const auto& suit : suits) {
+                int i = 0;
+                for (const auto& rank : ranks) {
+                    deck.push_back({ rank,suit,values[i] });
+                    i++;
+                }
+            }
+            s++;
+        } while (s < count);
+        mixDeck();
+    }
+};
+
+class BlackJackGame {
+private:
+    Deck deck;
+    vector<Card> player,dealer;
+    const int point = 21;
+public:
     int checkHand(const vector<Card>& hand) {
         int countAce = 0;
         int sum = 0;
@@ -57,13 +63,13 @@ public:
                 countAce++;
             }
         }
-        while (countAce  > 0 && sum + 10 <= 21) {
+        while (countAce  > 0 && sum + 10 <= point) {
             sum += 10;
             countAce--;
         }
         return sum;
     }
-    void startGame() {
+    void play() {
         system("cls");
         cout << "Добро пожаловать в игру Блэкджек!" << endl;
         cout << endl;
@@ -71,10 +77,10 @@ public:
             player.clear();
             dealer.clear();
             bool over = false; //перебор
-            player.push_back(takeCard());
-            dealer.push_back(takeCard());
-            player.push_back(takeCard());
-            dealer.push_back(takeCard());
+            player.push_back(deck.takeCard());
+            dealer.push_back(deck.takeCard());
+            player.push_back(deck.takeCard());
+            dealer.push_back(deck.takeCard());
             cout << "Первая карта дилера:" << endl;
             cout << dealer[0].rank << "\t" << dealer[0].suit << endl;
             cout << endl;
@@ -84,7 +90,7 @@ public:
                     cout << card.rank << "\t" << card.suit << endl;
                 }
                 cout << "Очки: " << checkHand(player) << endl;
-                if (checkHand(player) > 21) {
+                if (checkHand(player) > point) {
                     over = true;
                     break;
                 }
@@ -93,7 +99,7 @@ public:
                 cin >> choice;
                 cout << endl;
                 if (choice == 'y') {
-                    player.push_back(takeCard());
+                    player.push_back(deck.takeCard());
                 }
                 else {
                     break;
@@ -101,7 +107,7 @@ public:
             }
             if (!over) {
                 while (17>checkHand(dealer)) {
-                    dealer.push_back(takeCard());
+                    dealer.push_back(deck.takeCard());
                 }
             }
             cout << "Карты дилера:" << endl;
@@ -112,7 +118,7 @@ public:
             cout << endl;
             int p = checkHand(player);
             int d = checkHand(dealer);
-            if (p<=21&&(p > d || d > 21))
+            if (p<= point &&(p > d || d > point))
             {
                 cout << "Поздравляю вы выиграли!" << endl;
             } 
@@ -138,19 +144,15 @@ public:
             
         }
     }
-    BlackJackGame(vector<Card> _deck) : deck(_deck) {
-        mixDeck();
-    }
-
-
-
+    BlackJackGame(Deck& _deck) : deck(_deck) {}
 };
 
 int main()
 {
     system("chcp 1251");
-    Deck deck;
-    BlackJackGame game(deck.createDeck());
-    game.startGame();
+    system("cls");
+    Deck deck(1);
+    BlackJackGame game(deck);
+    game.play();
 
 }
